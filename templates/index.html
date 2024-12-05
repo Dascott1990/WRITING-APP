@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disappearing Text Writing App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Disappearing Text Writing App</h1>
+        <div class="timer">Time left: <span id="time-left">{{ timeout }}</span> seconds</div>
+        <textarea class="text-area" id="text-area" placeholder="Start typing..."></textarea>
+    </div>
+
+    <script>
+        const timeout = {{ timeout }};
+        let lastWrittenTime = Date.now();
+        let timerInterval;
+
+        // Function to update the timer and check for inactivity
+        function updateTimer() {
+            const now = Date.now();
+            const elapsed = (now - lastWrittenTime) / 1000;  // time in seconds
+            const remainingTime = timeout - Math.floor(elapsed);
+
+            if (remainingTime <= 0) {
+                document.getElementById("time-left").textContent = "Time's up!";
+                document.getElementById("text-area").classList.add("disappear");  // Apply disappear effect
+            } else {
+                document.getElementById("time-left").textContent = remainingTime + " seconds";
+            }
+        }
+
+        // Function to reset the timer when the user types
+        function resetTimer() {
+            lastWrittenTime = Date.now();
+            document.getElementById("text-area").classList.remove("disappear");  // Remove disappear effect
+        }
+
+        // Detect typing in the textarea and reset the timer
+        document.getElementById("text-area").addEventListener("input", resetTimer);
+
+        // Update the timer every second
+        timerInterval = setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
